@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	pb "geometry-client-go/epl/geometry"
 	"context"
+	"os"
 )
 
 var (
@@ -32,7 +33,14 @@ func main() {
 	} else {
 		opts = append(opts, grpc.WithInsecure())
 	}
-	conn, err := grpc.Dial(*serverAddr, opts...)
+	target := os.Getenv("GEOMETRY_SERVICE_TARGET")
+
+	if len(target) == 0 {
+		target = *serverAddr
+	}
+
+	conn, err := grpc.Dial(target, opts...)
+
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
 	}
