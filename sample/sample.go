@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"google.golang.org/grpc"
-	pb "geometry-client-go/epl/geometry"
+	pb "geometry-client-go/epl/grpc/geometry"
 	"context"
 	"os"
 )
@@ -47,29 +47,29 @@ func main() {
 	defer conn.Close()
 
 	client := pb.NewGeometryOperatorsClient(conn)
-	//sample := pb.Operator
-	//sample := pb.NewRouteGuideClient(conn)
-	geometry_string := []string{"MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"}
-	serviceGeometry := pb.GeometryBagData{GeometryStrings: geometry_string, GeometryEncodingType:pb.GeometryEncodingType_wkt}
-	cutterGeometry := pb.GeometryBagData{GeometryStrings: []string{"LINESTRING(0 0, 45 45)"}, GeometryEncodingType:pb.GeometryEncodingType_wkt}
 
-	operatorCut := &pb.OperatorRequest{LeftGeometryBag:&serviceGeometry, RightGeometryBag:&cutterGeometry}
-	//operatorCut := &pb.OperatorRequest{
-	//	PrimaryGeoms:&pb.OperatorRequest_LeftGeometryBag{&serviceGeometry},
-	//	SecondaryGeoms:&pb.OperatorRequest_RightGeometryBag{&cutterGeometry}}
-	//operator := pb.OperatorRequest{PrimaryGeoms:serviceGeometry, SecondaryGeoms:cutterGeometry}
-	//operator := pb.OperatorRequest{&serviceGeometry, &cutterGeometry}
-	//operator := pb.OperatorRequest{LeftGeometryBag:&serviceGeometry, RightGeometryBag:&cutterGeometry}
-	operatorCut.OperatorType = pb.ServiceOperatorType_Cut
-	operatorCut.ResultsEncodingType = pb.GeometryEncodingType_geojson
+	geometry_string := []string{"MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"}
+	serviceGeometry := pb.GeometryBagData{
+		Wkt: geometry_string,
+		GeometryEncodingType:pb.GeometryEncodingType_wkt}
+
+	cutterGeometry := pb.GeometryBagData{
+		Wkt: []string{"LINESTRING(0 0, 45 45)"},
+		GeometryEncodingType:pb.GeometryEncodingType_wkt}
+
+	operatorCut := &pb.OperatorRequest{
+		LeftGeometryBag:&serviceGeometry,
+		RightGeometryBag:&cutterGeometry,
+		OperatorType:pb.ServiceOperatorType_Cut,
+	    ResultsEncodingType:pb.GeometryEncodingType_geojson}
 
 	operatorResult, err := client.ExecuteOperation(context.Background(), operatorCut)
 
 
-	log.Println(operatorResult.GeometryBag.GeometryStrings[0])
+	log.Println(operatorResult.GeometryBag.Geojson[0])
 
-	operatorEquals := pb.OperatorRequest{ LeftNestedRequest:operatorCut, RightGeometryBag:&serviceGeometry, OperatorType:pb.ServiceOperatorType_Equals}
-	//operatorEquals := pb.OperatorRequest{PrimaryGeoms:&pb.OperatorRequest_LeftNestedRequest{operatorCut}, SecondaryGeoms:&pb.OperatorRequest_RightGeometryBag{&serviceGeometry}}
+	operatorEquals := pb.OperatorRequest{ LeftGeometryRequest:operatorCut, RightGeometryBag:&serviceGeometry, OperatorType:pb.ServiceOperatorType_Equals}
+	//operatorEquals := pb.OperatorRequest{PrimaryGeoms:&pb.OperatorRequest_LeftGeometryRequest{operatorCut}, SecondaryGeoms:&pb.OperatorRequest_RightGeometryBag{&serviceGeometry}}
 	operatorResultEquals, err := client.ExecuteOperation(context.Background(), &operatorEquals)
 	log.Println(operatorResultEquals.SpatialRelationship)
 }

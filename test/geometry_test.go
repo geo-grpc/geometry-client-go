@@ -3,7 +3,7 @@ package test
 import (
 	"flag"
 	"testing"
-	pb "geometry-client-go/epl/geometry"
+	pb "geometry-client-go/epl/grpc/geometry"
 	"google.golang.org/grpc/testdata"
 	"google.golang.org/grpc/credentials"
 	"log"
@@ -16,10 +16,11 @@ var (
 	tls                = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	caFile             = flag.String("ca_file", "", "The file containning the CA root cert file")
 	serverAddr         = flag.String("server_addr", "localhost:8980", "The server address in the format of host:port")
-	serverHostOverride = flag.String("server_host_override", "x.test.youtube.com", "The server name use to verify the hostname returned by TLS handshake")
+	serverHostOverride = flag.String("server_host_override", "x.test.youtube.com",
+		"The server name use to verify the hostname returned by TLS handshake")
 )
 
-func TestNestedRequests(t *testing.T) {
+func TestGeometryRequests(t *testing.T) {
 	flag.Parse()
 	var opts []grpc.DialOption
 	if *tls {
@@ -41,77 +42,44 @@ func TestNestedRequests(t *testing.T) {
 	defer conn.Close()
 
 	client := pb.NewGeometryOperatorsClient(conn)
-	/*
-
-        OperatorRequest nestedLeft = OperatorRequest
-                .newBuilder()
-                .setLeftNestedRequest(serviceOpLeft)
-                .setOperatorType(ServiceOperatorType.ConvexHull)
-                .setResultSpatialReference(spatialReferenceGall)
-                .build();
-
-        OperatorRequest serviceOpRight = OperatorRequest
-                .newBuilder()
-                .setLeftGeometryBag(geometryBagRight)
-                .setOperatorType(ServiceOperatorType.GeodesicBuffer)
-                .setBufferParams(OperatorRequest.BufferParams.newBuilder().addDistances(1000).setUnionResult(false).build())
-                .setOperationSpatialReference(spatialReferenceWGS)
-                .build();
-        OperatorRequest nestedRight = OperatorRequest
-                .newBuilder()
-                .setLeftNestedRequest(serviceOpRight)
-                .setOperatorType(ServiceOperatorType.ConvexHull)
-                .setResultSpatialReference(spatialReferenceGall)
-                .build();
-
-        OperatorRequest operatorRequestContains = OperatorRequest
-                .newBuilder()
-                .setLeftNestedRequest(nestedLeft)
-                .setRightNestedRequest(nestedRight)
-                .setOperatorType(ServiceOperatorType.Contains)
-                .setOperationSpatialReference(spatialReferenceMerc)
-                .build();
-
-        GeometryOperatorsGrpc.GeometryOperatorsBlockingStub stub = GeometryOperatorsGrpc.newBlockingStub(inProcessChannel);
-        OperatorResult operatorResult = stub.executeOperation(operatorRequestContains);
-        Map<Integer, Boolean> map = operatorResult.getRelateMapMap();
-
-        assertTrue(map.get(0));
-	        SpatialReferenceData spatialReferenceNAD = SpatialReferenceData.newBuilder().setWkid(4269).build();
-        SpatialReferenceData spatialReferenceMerc = SpatialReferenceData.newBuilder().setWkid(3857).build();
-        SpatialReferenceData spatialReferenceWGS = SpatialReferenceData.newBuilder().setWkid(4326).build();
-        SpatialReferenceData spatialReferenceGall = SpatialReferenceData.newBuilder().setWkid(54016).build();
-	 */
-
 
 	spatialReferenceWGS := pb.SpatialReferenceData{Wkid:4326}
-	spatialReferenceNAD := pb.SpatialReferenceData{Wkid:4269}//SpatialReferenceData.newBuilder().setWkid(4269).build();
+	spatialReferenceNAD27 := pb.SpatialReferenceData{Wkid:4267}
 	spatialReferenceMerc := pb.SpatialReferenceData{Wkid:3857}
 	spatialReferenceGall := pb.SpatialReferenceData{Wkid:54016}
+	spatialReferenceMoll := pb.SpatialReferenceData{Proj4:"+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"}
 
-	//var polyline = "MULTILINESTRING ((-120 -45, -100 -55, -90 -63, 0 0, 1 1, 100 25, 170 45, 175 65))";
 	geometry_string := []string{"MULTILINESTRING ((-120 -45, -100 -55, -90 -63, 0 0, 1 1, 100 25, 170 45, 175 65))"}
-	lefGeometryBag := pb.GeometryBagData{
-		GeometryStrings: geometry_string,
-		GeometryEncodingType:pb.GeometryEncodingType_wkt,
-		SpatialReference:&spatialReferenceNAD}
 
+	// define a geometry from an array of wkt strings (in this case only one geometry) with spatial reference nad83
+	lefGeometryBag := pb.GeometryBagData{
+		Wkt: geometry_string,
+		SpatialReference:&spatialReferenceNAD27}
+
+	// define a buffer opertor on geometry then buffered with distance size .5 degrees (I know horrible), and then
+	// the result is transformed to WGS84
 	operatorLeft := pb.OperatorRequest{
 		GeometryBag:&lefGeometryBag,
 		OperatorType:pb.ServiceOperatorType_Buffer,
 		BufferParams:&pb.BufferParams{Distances:[]float64{.5}},
 		ResultSpatialReference:&spatialReferenceWGS}
 
+	// nest the result of previous buffer operation as the geometry input for this operation,
+	// project that resulting buffered geometry to World Mollweide, perform the convex hull operation then
+	// project that result to World Gall Stereo
 	operatorNestedLeft := pb.OperatorRequest{
-		NestedRequest:&operatorLeft,
+		GeometryRequest:&operatorLeft,
 		OperatorType:pb.ServiceOperatorType_ConvexHull,
+		OperationSpatialReference:&spatialReferenceMoll,
 		ResultSpatialReference:&spatialReferenceGall}
 
+	// define a geometry from wkt string with spatial reference nad83
 	rightGeometryBag := pb.GeometryBagData{
-		GeometryStrings: geometry_string,
-		GeometryEncodingType:pb.GeometryEncodingType_wkt,
-		SpatialReference:&spatialReferenceNAD}
+		Wkt: geometry_string,
+		SpatialReference:&spatialReferenceNAD27}
 
+	// Project the geometry to WGS84 and then perform a geodesic buffer of the input geometry with a distance of 1000 meters.
+	// The parameters for the geodesic buffer will be derived from the WGS84 spatial reference (the resulting spatial reference will be wgs84)
 	operatorRight := pb.OperatorRequest{
 		GeometryBag:&rightGeometryBag,
 		OperatorType:pb.ServiceOperatorType_GeodesicBuffer,
@@ -120,18 +88,19 @@ func TestNestedRequests(t *testing.T) {
 			UnionResult:false},
 		OperationSpatialReference:&spatialReferenceWGS}
 
+	// Perform a convex hull operation on the previous buffer operation's result. And then project to Gall
 	operatorNestedRight := pb.OperatorRequest{
-		NestedRequest:&operatorRight,
+		GeometryRequest:&operatorRight,
 		OperatorType:pb.ServiceOperatorType_ConvexHull,
 		ResultSpatialReference:&spatialReferenceGall}
 
+	// take each of the nested buffer + convex hull and test that the non-geodesic contains the geodesic
 	operatorContains := pb.OperatorRequest{
-		LeftNestedRequest:&operatorNestedLeft,
-		RightNestedRequest:&operatorNestedRight,
+		LeftGeometryRequest:&operatorNestedLeft,
+		RightGeometryRequest:&operatorNestedRight,
 		OperatorType:pb.ServiceOperatorType_Contains,
 		OperationSpatialReference:&spatialReferenceMerc}
 	operatorResultEquals, err := client.ExecuteOperation(context.Background(), &operatorContains)
-	log.Println(operatorResultEquals.SpatialRelationship)
 
 	result := operatorResultEquals.RelateMap[0]
 

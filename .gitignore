@@ -1,1 +1,7 @@
 .idea/libraries/*.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/geometry-client-go.iml
+epl/
+
