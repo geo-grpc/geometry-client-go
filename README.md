@@ -20,9 +20,10 @@ protoc -I proto/ proto/epl/grpc/geometry/geometry_operators.proto --go_out=plugi
 ```bash
 cd geometry-client-go
 minikube start
+eval $(minikube docker-env)
 docker build -t go-client:latest .
 kubectl create -f geometry-service.yml
-kubectl create -f geom-api.yml
+kubectl create -f go-api.yml
 minikube service geom-api --url
 ```
 

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: geometry-service
-        image: echoparklabs/geometry-service-java:latest
+        image: echoparklabs/geometry-service-java:8-jre-alpine
         ports:
         - name: geometry-port
           containerPort: 8980
