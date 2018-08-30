@@ -14,7 +14,11 @@ Build protobuf
 protoc -I proto/ proto/epl/grpc/geometry/geometry_operators.proto --go_out=plugins=grpc:./
 ```
 
-
+## Testing againt geometry service
+```bash
+docker run -p 8980:8980 -it --name=temp-c echoparklabs/geometry-service-java:8-jre-slim
+go test test/geometry_test.go -v
+```
 
 ## Running example in Minikube
 ```bash
