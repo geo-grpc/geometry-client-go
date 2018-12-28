@@ -3,7 +3,7 @@ package test
 import (
 	"flag"
 	"testing"
-	pb "geometry-client-go/epl/geometry"
+	pb "geo-grpc/geometry-client-go/epl/geometry"
 	"google.golang.org/grpc/testdata"
 	"google.golang.org/grpc/credentials"
 	"log"
@@ -92,7 +92,7 @@ func TestNestedRequests(t *testing.T) {
 	//var polyline = "MULTILINESTRING ((-120 -45, -100 -55, -90 -63, 0 0, 1 1, 100 25, 170 45, 175 65))";
 	geometry_string := []string{"MULTILINESTRING ((-120 -45, -100 -55, -90 -63, 0 0, 1 1, 100 25, 170 45, 175 65))"}
 	lefGeometryBag := pb.GeometryBagData{
-		GeometryStrings: geometry_string,
+		Wkt: geometry_string,
 		GeometryEncodingType:pb.GeometryEncodingType_wkt,
 		SpatialReference:&spatialReferenceNAD}
 
@@ -103,12 +103,12 @@ func TestNestedRequests(t *testing.T) {
 		ResultSpatialReference:&spatialReferenceWGS}
 
 	operatorNestedLeft := pb.OperatorRequest{
-		NestedRequest:&operatorLeft,
+		LeftGeometryRequest:&operatorLeft,
 		OperatorType:pb.ServiceOperatorType_ConvexHull,
 		ResultSpatialReference:&spatialReferenceGall}
 
 	rightGeometryBag := pb.GeometryBagData{
-		GeometryStrings: geometry_string,
+		Wkt: geometry_string,
 		GeometryEncodingType:pb.GeometryEncodingType_wkt,
 		SpatialReference:&spatialReferenceNAD}
 
@@ -121,13 +121,13 @@ func TestNestedRequests(t *testing.T) {
 		OperationSpatialReference:&spatialReferenceWGS}
 
 	operatorNestedRight := pb.OperatorRequest{
-		NestedRequest:&operatorRight,
+		LeftGeometryRequest:&operatorRight,
 		OperatorType:pb.ServiceOperatorType_ConvexHull,
 		ResultSpatialReference:&spatialReferenceGall}
 
 	operatorContains := pb.OperatorRequest{
-		LeftNestedRequest:&operatorNestedLeft,
-		RightNestedRequest:&operatorNestedRight,
+		LeftGeometryRequest:&operatorNestedLeft,
+		RightGeometryRequest:&operatorNestedRight,
 		OperatorType:pb.ServiceOperatorType_Contains,
 		OperationSpatialReference:&spatialReferenceMerc}
 	operatorResultEquals, err := client.ExecuteOperation(context.Background(), &operatorContains)
