@@ -23,7 +23,7 @@ package test
 import (
 	"flag"
 	"testing"
-	pb "geometry-client-go/epl/grpc/geometry"
+	pb "geometry-client-go/epl/geometry"
 	"google.golang.org/grpc/testdata"
 	"google.golang.org/grpc/credentials"
 	"log"

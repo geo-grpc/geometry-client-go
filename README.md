@@ -11,7 +11,7 @@ go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 
 Build protobuf
 ```bash
-protoc -I proto/ proto/epl/grpc/geometry/geometry_operators.proto --go_out=plugins=grpc:./
+protoc -I proto/ proto/epl/geometry/geometry_operators.proto --go_out=plugins=grpc:./
 ```
 
 ## Testing againt geometry service
