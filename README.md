@@ -16,7 +16,7 @@ protoc -I proto/ proto/epl/geometry/geometry_operators.proto --go_out=plugins=gr
 
 ## Testing againt geometry service
 ```bash
-docker run -p 8980:8980 -it --name=temp-c echoparklabs/geometry-service-java:8-jre-slim
+docker run -p 8980:8980 -d --name=temp-c echoparklabs/geometry-service-java:8-jre-slim
 go test test/geometry_test.go -v
 ```
 
