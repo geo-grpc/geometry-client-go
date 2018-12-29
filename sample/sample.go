@@ -26,7 +26,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"google.golang.org/grpc"
-	pb "geometry-client-go/epl/geometry"
+	pb "geometry-client-go/epl/protobuf/geometry"
 	"context"
 	"os"
 	"net/http"
