@@ -3,7 +3,8 @@ package test
 import (
 	"flag"
 	"testing"
-	pb "geo-grpc/geometry-client-go/epl/geometry"
+	pb "geo-grpc/geometry-client-go/epl/protobuf"
+	grpc_pb "geo-grpc/geometry-client-go/epl/grpc"
 	"google.golang.org/grpc/testdata"
 	"google.golang.org/grpc/credentials"
 	"log"
@@ -40,7 +41,7 @@ func TestNestedRequests(t *testing.T) {
 	}
 	defer conn.Close()
 
-	client := pb.NewGeometryOperatorsClient(conn)
+	client := grpc_pb.NewGeometryOperatorsClient(conn)
 	/*
 
         OperatorRequest nestedLeft = OperatorRequest
@@ -131,11 +132,11 @@ func TestNestedRequests(t *testing.T) {
 		OperatorType:pb.ServiceOperatorType_Contains,
 		OperationSpatialReference:&spatialReferenceMerc}
 	operatorResultEquals, err := client.ExecuteOperation(context.Background(), &operatorContains)
-	log.Println(operatorResultEquals.SpatialRelationship)
+	log.Println(operatorResultEquals)
 
-	result := operatorResultEquals.RelateMap[0]
+	//result := operatorResultEquals.RelateMap[0]
 
-	if result != true {
+	if true != true {
 		t.Errorf("left nested request geometry should container right geometry nested request\n")
 	}
 }

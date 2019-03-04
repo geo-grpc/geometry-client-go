@@ -6,7 +6,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"google.golang.org/grpc"
-	pb "geo-grpc/geometry-client-go/epl/geometry"
+	pb "geo-grpc/geometry-client-go/epl/protobuf"
+	grpc_pb "geo-grpc/geometry-client-go/epl/grpc"
 	"context"
 	"os"
 )
@@ -46,7 +47,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	client := pb.NewGeometryOperatorsClient(conn)
+	client := grpc_pb.NewGeometryOperatorsClient(conn)
 	//sample := pb.Operator
 	//sample := pb.NewRouteGuideClient(conn)
 	geometry_string := []string{"MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"}
