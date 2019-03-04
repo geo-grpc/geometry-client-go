@@ -1,10 +1,8 @@
 FROM golang:1.8
 
-WORKDIR /go/src/geometry-client-go
-COPY ./ ./
+COPY ./ /go/src/github.com/geo-grpc/geometry-client-go
+WORKDIR /go/src/github.com/geo-grpc/geometry-client-go
 
-WORKDIR /go/src/geometry-client-go/sample
+WORKDIR /go/src/github.com/geo-grpc/geometry-client-go/sample
 
 RUN go get -d -v ./...
-
-RUN go build

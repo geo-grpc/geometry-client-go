@@ -6,8 +6,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"log"
 	"google.golang.org/grpc"
-	pb "geo-grpc/geometry-client-go/epl/protobuf"
-	grpc_pb "geo-grpc/geometry-client-go/epl/grpc"
+	pb "github.com/geo-grpc/geometry-client-go/epl/protobuf"
+	grpc_pb "github.com/geo-grpc/geometry-client-go/epl/grpc"
 	"context"
 	"os"
 )

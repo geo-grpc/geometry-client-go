@@ -3,8 +3,8 @@ package test
 import (
 	"flag"
 	"testing"
-	pb "geo-grpc/geometry-client-go/epl/protobuf"
-	grpc_pb "geo-grpc/geometry-client-go/epl/grpc"
+	pb "github.com/geo-grpc/geometry-client-go/epl/protobuf"
+	grpc_pb "github.com/geo-grpc/geometry-client-go/epl/grpc"
 	"google.golang.org/grpc/testdata"
 	"google.golang.org/grpc/credentials"
 	"log"
