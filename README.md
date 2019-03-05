@@ -34,5 +34,6 @@ minikube service geom-api --url
 
 Then curl the output from the above `minikube service geom-api --url` command
 
-
+testing:
+https://github.com/2tvenom/go-test-teamcity
 
