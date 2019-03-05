@@ -22,6 +22,7 @@ package test
 
 import (
 	"flag"
+	"os"
 	"testing"
 	pb "github.com/geo-grpc/geometry-client-go/epl/protobuf"
 	grpc_pb "github.com/geo-grpc/geometry-client-go/epl/grpc"
@@ -41,6 +42,14 @@ var (
 		"The server name use to verify the hostname returned by TLS handshake")
 )
 
+func getEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
+}
+
 func TestGeometryRequests(t *testing.T) {
 	flag.Parse()
 	var opts []grpc.DialOption
@@ -56,7 +65,8 @@ func TestGeometryRequests(t *testing.T) {
 	} else {
 		opts = append(opts, grpc.WithInsecure())
 	}
-	conn, err := grpc.Dial(*serverAddr, opts...)
+	serverAddr := getEnv("GEOMETRY_SERVICE_HOST", "localhost:8980")
+	conn, err := grpc.Dial(serverAddr, opts...)
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
 	}
