@@ -1,3 +1,6 @@
+## API definition
+The API for the go client is defined by the api located in [this geo-grpc repo](https://github.com/geo-grpc/api). The Protobuf files and gRPC files are already compiled there. So you only need to import those files in your program as in this test and sample application.
+
 ## Install protoc
 
 also, remember that you `GOROOT` and `GOPATH` need to be defined (https://stackoverflow.com/a/34896844/445372):
