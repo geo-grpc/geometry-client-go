@@ -133,6 +133,11 @@ func TestGeometryRequests(t *testing.T) {
 		OperationSpatialReference:&spatialReferenceMerc}
 	operatorResultEquals, err := client.ExecuteOperation(context.Background(), &operatorContains)
 
+	if operatorResultEquals == nil || operatorResultEquals.RelateMap == nil || len(operatorResultEquals.RelateMap) == 0 {
+		t.Errorf("No results found")
+		return
+	}
+
 	result := operatorResultEquals.RelateMap[0]
 
 	if result != true {
