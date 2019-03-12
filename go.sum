@@ -3,6 +3,11 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/geo-grpc/api v0.0.0-20190311012039-2636566f6134 h1:AeZOvTA16j10HcnBBEOyNO4RZqXJSioFXb2Vo/bsnFM=
 github.com/geo-grpc/api v0.0.0-20190311012039-2636566f6134/go.mod h1:fYFori+oo/L8zwZCwBCUzioMnHHPnDHycyDjO0g1Cbw=
+github.com/geo-grpc/api v0.0.1 h1:EcQlEjA6rvNofgnVaAqF3Iy/r3QkW/GlWFSbRHhTpTY=
+github.com/geo-grpc/api v0.0.1/go.mod h1:fYFori+oo/L8zwZCwBCUzioMnHHPnDHycyDjO0g1Cbw=
+github.com/geo-grpc/api v0.0.2 h1:hnqaBpurWx/pNLm71mVuHSKujZuH6Y76HoTOu2aY+Go=
+github.com/geo-grpc/api v0.0.2/go.mod h1:fYFori+oo/L8zwZCwBCUzioMnHHPnDHycyDjO0g1Cbw=
+github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b h1:VKtxabqXZkF25pY9ekfRL6a582T4P37/31XEstQ5p58=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
