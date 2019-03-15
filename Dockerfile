@@ -5,7 +5,7 @@ COPY ./ /go/src/github.com/geo-grpc/geometry-client-go
 
 WORKDIR /go/src/github.com/geo-grpc/geometry-client-go/sample
 
-RUN go get -v ./...
-RUN go install -v ./...
+ENV GO111MODULE=on
+RUN go build
 
 WORKDIR /go/src/github.com/geo-grpc/geometry-client-go
