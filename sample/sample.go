@@ -77,7 +77,7 @@ func callGrpc() string {
 	}
 	defer conn.Close()
 
-	client := grpc_pb.NewGeometryOperatorsClient(conn)
+	client := grpc_pb.NewGeometryServiceClient(conn)
 	inputSpatialReference := &pb.SpatialReferenceData{Wkid:3857}
 	outputSpatialreference := &pb.SpatialReferenceData{Proj4:"+init=epsg:4326"}
 
@@ -91,28 +91,28 @@ func callGrpc() string {
 		SpatialReference:     inputSpatialReference,
 	}
 
-	operatorSimplify := &pb.OperatorRequest{
+	operatorSimplify := &pb.GeometryRequest{
 		GeometryBag:               &serviceGeometry,
 		OperatorType:              pb.ServiceOperatorType_Simplify,
 		SimplifyParams:            &pb.SimplifyParams{Force:true},
 		OperationSpatialReference: inputSpatialReference,
 	}
 
-	operatorGeneralize := &pb.OperatorRequest{
+	operatorGeneralize := &pb.GeometryRequest{
 		GeometryRequest:           operatorSimplify,
 		GeneralizeByAreaParams:    &pb.GeneralizeByAreaParams{RemoveDegenerates:true, MaxPointCount:20},
 		OperatorType:              pb.ServiceOperatorType_GeneralizeByArea,
 		OperationSpatialReference: inputSpatialReference,
 	}
 
-	operatorProject := &pb.OperatorRequest{
+	operatorProject := &pb.GeometryRequest{
 		GeometryRequest:        operatorGeneralize,
 		OperatorType:           pb.ServiceOperatorType_Project,
 		ResultsEncodingType:    pb.GeometryEncodingType_geojson,
 		ResultSpatialReference: outputSpatialreference,
 	}
 
-	operatorResult, err := client.ExecuteOperation(context.Background(), operatorProject)
+	operatorResult, err := client.GeometryOperationUnary(context.Background(), operatorProject)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
