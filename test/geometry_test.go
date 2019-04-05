@@ -23,7 +23,6 @@ package test
 import (
 	"context"
 	"flag"
-	"fmt"
 	grpcepl "github.com/geo-grpc/api/golang/epl/grpc"
 	pb "github.com/geo-grpc/api/golang/epl/protobuf"
 	"github.com/paulmach/orb"
