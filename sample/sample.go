@@ -90,7 +90,7 @@ func callGrpc() string {
 
 	operatorSimplify := &pb.GeometryRequest{
 		Geometry:		&serviceGeometry,
-		Operator:		pb.GeometryRequest_Simplify,
+		Operator:		pb.OperatorType_SIMPLIFY,
 		SimplifyParams: &pb.GeometryRequest_SimplifyParams{Force:true},
 		OperationSr: 	inputSpatialReference,
 	}
@@ -98,14 +98,14 @@ func callGrpc() string {
 	operatorGeneralize := &pb.GeometryRequest{
 		GeometryRequest:		operatorSimplify,
 		GeneralizeByAreaParams:	&pb.GeometryRequest_GeneralizeByAreaParams{RemoveDegenerates:true, MaxPointCount:20},
-		Operator:				pb.GeometryRequest_GeneralizeByArea,
+		Operator:				pb.OperatorType_GENERALIZE_BY_AREA,
 		OperationSr:			inputSpatialReference,
 	}
 
 	operatorProject := &pb.GeometryRequest{
 		GeometryRequest:	operatorGeneralize,
-		Operator:			pb.GeometryRequest_Project,
-		ResultEncoding:		pb.GeometryData_GEOJSON,
+		Operator:			pb.OperatorType_PROJECT,
+		ResultEncoding:		pb.Encoding_GEOJSON,
 		ResultSr: 			outputSpatialreference,
 	}
 

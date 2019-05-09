@@ -99,7 +99,7 @@ func TestGeometryRequests(t *testing.T) {
 	// the result is transformed to WGS84
 	operatorLeft := pb.GeometryRequest{
 		Geometry:&lefGeometryBag,
-		Operator:pb.GeometryRequest_Buffer,
+		Operator:pb.OperatorType_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{Distance:.5},
 		ResultSr:&spatialReferenceWGS}
 
@@ -108,7 +108,7 @@ func TestGeometryRequests(t *testing.T) {
 	// project that result to World Gall Stereo
 	operatorNestedLeft := pb.GeometryRequest{
 		GeometryRequest:&operatorLeft,
-		Operator:pb.GeometryRequest_ConvexHull,
+		Operator:pb.OperatorType_CONVEX_HULL,
 		OperationSr:&spatialReferenceMoll,
 		ResultSr:&spatialReferenceGall}
 
@@ -121,7 +121,7 @@ func TestGeometryRequests(t *testing.T) {
 	// The parameters for the geodesic buffer will be derived from the WGS84 spatial reference (the resulting spatial reference will be wgs84)
 	operatorRight := pb.GeometryRequest{
 		Geometry:&rightGeometryBag,
-		Operator:pb.GeometryRequest_GeodesicBuffer,
+		Operator:pb.OperatorType_GEODESIC_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{
 			Distance:1000,
 			UnionResult:false},
@@ -130,14 +130,14 @@ func TestGeometryRequests(t *testing.T) {
 	// Perform a convex hull operation on the previous buffer operation's result. And then project to Gall
 	operatorNestedRight := pb.GeometryRequest{
 		GeometryRequest:&operatorRight,
-		Operator:pb.GeometryRequest_ConvexHull,
+		Operator:pb.OperatorType_CONVEX_HULL,
 		ResultSr:&spatialReferenceGall}
 
 	// take each of the nested buffer + convex hull and test that the non-geodesic contains the geodesic
 	operatorContains := pb.GeometryRequest{
 		LeftGeometryRequest:&operatorNestedLeft,
 		RightGeometryRequest:&operatorNestedRight,
-		Operator:pb.GeometryRequest_Contains,
+		Operator:pb.OperatorType_CONTAINS,
 		OperationSr:&spatialReferenceMerc}
 
 	cleanup, client := getConnection()
@@ -169,16 +169,16 @@ func TestOrb(t *testing.T)  {
 
 	operatorLeft := pb.GeometryRequest{
 		Geometry:&geometryBag,
-		Operator:pb.GeometryRequest_Buffer,
+		Operator:pb.OperatorType_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{Distance:.5},
 		ResultSr:&spatialReferenceWGS,
-		ResultEncoding:pb.GeometryData_WKB}
+		ResultEncoding:pb.Encoding_WKB}
 
 	operatorContains := pb.GeometryRequest{
 		LeftGeometryRequest:&operatorLeft,
 		RightGeometry:&geometryBag,
 		OperationSr:&spatialReferenceWGS,
-		Operator:pb.GeometryRequest_Contains,
+		Operator:pb.OperatorType_CONTAINS,
 	}
 
 	cleanup, client := getConnection()
@@ -209,10 +209,10 @@ func TestOrbBounds(t *testing.T)  {
 
 	operatorLeft := pb.GeometryRequest{
 		Geometry:&geometryBag,
-		Operator:pb.GeometryRequest_Buffer,
+		Operator:pb.OperatorType_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{Distance:.5},
 		ResultSr:&spatialReferenceWGS,
-		ResultEncoding:pb.GeometryData_WKB}
+		ResultEncoding:pb.Encoding_WKB}
 
 	cleanup, client := getConnection()
 	defer cleanup()
@@ -253,7 +253,7 @@ func TestGeometryRequestsNoBag(t *testing.T) {
 	// the result is transformed to WGS84
 	operatorLeft := pb.GeometryRequest{
 		Geometry:&lefGeometry,
-		Operator:pb.GeometryRequest_Buffer,
+		Operator:pb.OperatorType_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{Distance:.5},
 		ResultSr:&spatialReferenceWGS}
 
@@ -262,7 +262,7 @@ func TestGeometryRequestsNoBag(t *testing.T) {
 	// project that result to World Gall Stereo
 	operatorNestedLeft := pb.GeometryRequest{
 		GeometryRequest:&operatorLeft,
-		Operator:pb.GeometryRequest_ConvexHull,
+		Operator:pb.OperatorType_CONVEX_HULL,
 		OperationSr:&spatialReferenceMoll,
 		ResultSr:&spatialReferenceGall}
 
@@ -275,7 +275,7 @@ func TestGeometryRequestsNoBag(t *testing.T) {
 	// The parameters for the geodesic buffer will be derived from the WGS84 spatial reference (the resulting spatial reference will be wgs84)
 	operatorRight := pb.GeometryRequest{
 		Geometry:&rightGeometry,
-		Operator:pb.GeometryRequest_GeodesicBuffer,
+		Operator:pb.OperatorType_GEODESIC_BUFFER,
 		BufferParams:&pb.GeometryRequest_BufferParams{
 			Distance:1000,
 			UnionResult:false},
@@ -284,14 +284,14 @@ func TestGeometryRequestsNoBag(t *testing.T) {
 	// Perform a convex hull operation on the previous buffer operation's result. And then project to Gall
 	operatorNestedRight := pb.GeometryRequest{
 		GeometryRequest:&operatorRight,
-		Operator:pb.GeometryRequest_ConvexHull,
+		Operator:pb.OperatorType_CONVEX_HULL,
 		ResultSr:&spatialReferenceGall}
 
 	// take each of the nested buffer + convex hull and test that the non-geodesic contains the geodesic
 	operatorContains := pb.GeometryRequest{
 		LeftGeometryRequest:&operatorNestedLeft,
 		RightGeometryRequest:&operatorNestedRight,
-		Operator:pb.GeometryRequest_Contains,
+		Operator:pb.OperatorType_CONTAINS,
 		OperationSr:&spatialReferenceMerc}
 
 	cleanup, client := getConnection()
