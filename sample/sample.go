@@ -109,7 +109,7 @@ func callGrpc() string {
 		ResultSr: 			outputSpatialreference,
 	}
 
-	operatorResult, err := client.GeometryOperationUnary(context.Background(), operatorProject)
+	operatorResult, err := client.Operate(context.Background(), operatorProject)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

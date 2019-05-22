@@ -143,7 +143,7 @@ func TestGeometryRequests(t *testing.T) {
 	cleanup, client := getConnection()
 	defer cleanup()
 
-	operatorResultEquals, err := client.GeometryOperationUnary(context.Background(), &operatorContains)
+	operatorResultEquals, err := client.Operate(context.Background(), &operatorContains)
 
 	if err != nil || operatorResultEquals == nil || operatorResultEquals.RelateMap == nil || len(operatorResultEquals.RelateMap) == 0 {
 		t.Errorf("No results found")
@@ -184,7 +184,7 @@ func TestOrb(t *testing.T)  {
 	cleanup, client := getConnection()
 	defer cleanup()
 
-	operatorResults, err := client.GeometryOperationUnary(context.Background(), &operatorContains)
+	operatorResults, err := client.Operate(context.Background(), &operatorContains)
 
 	if err != nil || operatorResults == nil || operatorResults.RelateMap == nil || len(operatorResults.RelateMap) == 0 {
 		t.Errorf("No results found")
@@ -217,7 +217,7 @@ func TestOrbBounds(t *testing.T)  {
 	cleanup, client := getConnection()
 	defer cleanup()
 
-	operatorResults, err := client.GeometryOperationUnary(context.Background(), &operatorLeft)
+	operatorResults, err := client.Operate(context.Background(), &operatorLeft)
 	if err != nil || operatorResults == nil || operatorResults.Geometry == nil {
 		t.Errorf("No results found")
 		return
@@ -297,7 +297,7 @@ func TestGeometryRequestsNoBag(t *testing.T) {
 	cleanup, client := getConnection()
 	defer cleanup()
 
-	operatorResultEquals, err := client.GeometryOperationUnary(context.Background(), &operatorContains)
+	operatorResultEquals, err := client.Operate(context.Background(), &operatorContains)
 
 	if err != nil || operatorResultEquals == nil || operatorResultEquals.RelateMap == nil || len(operatorResultEquals.RelateMap) == 0 {
 		t.Errorf("No results found")
